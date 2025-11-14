@@ -1,3 +1,5 @@
+//pega os itens
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:foto/models/place.dart';
@@ -7,33 +9,27 @@ class GreatePlaces with ChangeNotifier {
   final List<Place> _items = [];
 
   List<Place> get items {
-    return [..._items];
+    return [..._items]; //não retorna diretamente para a lista
   }
 
   int get itemsCount {
-    return _items.length;
+    return _items.length; //os itens virão para este trecho.
   }
 
   Place itemByIndex(int index) {
-    return _items[index];
+    return _items[index]; //os dados retorna pelo id
   }
 
-  // ATUALIZADO para aceitar localização e nota
-  void addPlace(
-    String title,
-    File image,
-    PlaceLocation location,
-    String? note,
-  ) {
+  void addPlace(String title, File image) {
     final newPlace = Place(
       id: Random().nextDouble().toString(),
       title: title,
       image: image,
-      location: location, // <-- ATUALIZADO
-      note: note, // <-- ATUALIZADO
+      location: null,
     );
 
     _items.add(newPlace);
     notifyListeners();
   }
 }
+

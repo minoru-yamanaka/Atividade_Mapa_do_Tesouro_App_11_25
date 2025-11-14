@@ -1,9 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:foto/models/place.dart';
 import 'package:foto/providers/greate_places.dart';
 import 'package:foto/widgets/image_input.dart';
-import 'package:foto/widgets/location_input.dart'; // <-- IMPORTADO
 import 'package:provider/provider.dart';
 
 class PlaceFormScreen extends StatefulWidget {
@@ -15,35 +13,23 @@ class PlaceFormScreen extends StatefulWidget {
 
 class _PlaceFormScreenState extends State<PlaceFormScreen> {
   final _titleController = TextEditingController();
-  final _noteController = TextEditingController(); // <-- ADICIONADO
-  File? _pickedImage;
-  PlaceLocation? _pickedLocation; // <-- ADICIONADO
+  File? pickedImage;
 
-  void _selectImage(File image) {
-    _pickedImage = image;
-  }
-
-  // <-- ADICIONADO
-  void _selectLocation(PlaceLocation location) {
-    _pickedLocation = location;
+  void _selectImage(File Image) {
+    pickedImage = Image;
   }
 
   void _submitForm() {
-    // ATUALIZADO para checar localização
-    if (_titleController.text.isEmpty ||
-        _pickedImage == null ||
-        _pickedLocation == null) {
-      // Adicione um feedback visual (ex: SnackBar) se desejar
+    // metodo do botão
+    if (_titleController.text.isEmpty || pickedImage == null) {
       return;
     }
 
-    Provider.of<GreatePlaces>(context, listen: false).addPlace(
-      // <-- ATUALIZADO
-      _titleController.text,
-      _pickedImage!,
-      _pickedLocation!,
-      _noteController.text,
-    );
+    // 
+    Provider.of<GreatePlaces>(
+      context,
+      listen: false,
+    ).addPlace(_titleController.text, pickedImage!); // <-- Erro aqui!
 
     Navigator.of(context).pop();
   }
@@ -56,6 +42,7 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Expanded(
+            //oculpa o espaço todo da tela
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(10),
@@ -63,19 +50,11 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
                   children: <Widget>[
                     TextField(
                       controller: _titleController,
-                      decoration: const InputDecoration(labelText: 'Título'),
+                      decoration: InputDecoration(labelText: 'Título'),
                     ),
+
                     const SizedBox(height: 10),
-                    // <-- ADICIONADO (Campo de Nota)
-                    TextField(
-                      controller: _noteController,
-                      decoration: const InputDecoration(labelText: 'Nota'),
-                      maxLines: 3,
-                    ),
-                    const SizedBox(height: 20),
                     ImageInput(_selectImage),
-                    const SizedBox(height: 20),
-                    LocationInput(_selectLocation), // <-- ADICIONADO
                   ],
                 ),
               ),

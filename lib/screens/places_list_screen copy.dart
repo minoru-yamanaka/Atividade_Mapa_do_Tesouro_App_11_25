@@ -8,7 +8,7 @@ class PlacesListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mapas dos Tesouros'),
+        title: const Text('Meus Lugares'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -31,13 +31,7 @@ class PlacesListScreen extends StatelessWidget {
                     ),
                   ),
                   title: Text(greatePlaces.itemByIndex(i).title),
-                  // <-- ATUALIZADO (Mostra a nota ou um texto padrão)
-                  subtitle: Text(
-                    greatePlaces.itemByIndex(i).note ?? 'Sem notas',
-                  ),
-                  onTap: () {
-                    // Aqui você pode navegar para uma tela de detalhes
-                  },
+                  onTap: () {},
                 ),
               ),
       ),

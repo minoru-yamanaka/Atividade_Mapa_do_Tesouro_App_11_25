@@ -1,6 +1,6 @@
 import 'dart:io';
 
-class PlaceLocation {
+class PlaceLocation{
   final double latitude;
   final double longitude;
   final String? address;
@@ -12,18 +12,18 @@ class PlaceLocation {
   });
 }
 
-class Place {
+class Place{
   final String id;
   final String title;
   final PlaceLocation? location;
   final File image;
-  final String? note; // <-- ADICIONADO
 
   Place({
     required this.id,
     required this.title,
     required this.location,
     required this.image,
-    this.note, // <-- ADICIONADO
   });
 }
+
+
