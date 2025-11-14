@@ -16,14 +16,34 @@ class PlaceFormScreen extends StatefulWidget {
 }
 
 class _PlaceFormScreenState extends State<PlaceFormScreen> {
+  // --- Controladores ---
   final _titleController = TextEditingController();
   final _noteController = TextEditingController();
-  final _nomeRuaController = TextEditingController(); // <-- ADICIONADO
+  final _nomeRuaController = TextEditingController();
   final _cepController = TextEditingController();
   final _numeroController = TextEditingController();
 
+  // --- Variáveis de Estado ---
   File? _pickedImage;
-  PlaceLocation? _pickedLocation; // Guarda Lat/Lng
+  PlaceLocation? _pickedLocation;
+
+  // --- Cores Personalizadas ---
+  final Color _backgroundColor = const Color(0xFF27C5B2);
+  final Color _buttonColor = const Color(0xFFFC7ACF);
+
+  // --- Constante de Espaçamento ---
+  final _spacing = const SizedBox(height: 16);
+
+  @override
+  void dispose() {
+    // Boa prática: Limpar os controllers
+    _titleController.dispose();
+    _noteController.dispose();
+    _nomeRuaController.dispose();
+    _cepController.dispose();
+    _numeroController.dispose();
+    super.dispose();
+  }
 
   void _selectImage(File image) {
     _pickedImage = image;
@@ -48,12 +68,11 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
       return;
     }
 
-    // <-- LÓGICA ATUALIZADA -->
     final completeLocation = PlaceLocation(
       latitude: _pickedLocation!.latitude,
       longitude: _pickedLocation!.longitude,
       address: _pickedLocation!.address,
-      nomeRua: _nomeRuaController.text, // <-- ADICIONADO
+      nomeRua: _nomeRuaController.text,
       cep: _cepController.text,
       numero: _numeroController.text,
     );
@@ -68,35 +87,66 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
     Navigator.of(context).pop();
   }
 
+  // Ajuste de Estilo: Tema para os campos de texto no fundo escuro
+  InputDecoration _buildInputDecoration(String label, IconData icon) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: Colors.white), // Texto do label branco
+      prefixIcon: Icon(icon, color: Colors.white, size: 20), // Ícone branco
+      filled: true,
+      fillColor: Colors.white.withOpacity(0.1), // Preenchimento sutil
+      // Borda padrão
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(0), // Bordas quadradas
+        borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+      ),
+      // Borda ao focar
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(0), // Bordas quadradas
+        borderSide: const BorderSide(color: Colors.white),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Novo Lugar')),
+      // Cor de fundo aplicada
+      backgroundColor: _backgroundColor,
+      appBar: AppBar(
+        title: const Text('Novo Lugar'),
+        // AppBar com a mesma cor e sem sombra
+        backgroundColor: _backgroundColor,
+        foregroundColor: Colors.white, // Cor do texto e ícones da appbar
+        elevation: 0,
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(16.0), // Padding aumentado
                 child: Column(
                   children: <Widget>[
                     TextField(
                       controller: _titleController,
-                      decoration: const InputDecoration(labelText: 'Título'),
-                    ),
-                    const SizedBox(height: 10),
-
-                    // <-- CAMPO ADICIONADO -->
-                    TextField(
-                      controller: _nomeRuaController,
-                      decoration: const InputDecoration(
-                        labelText: 'Nome da Rua',
+                      style: const TextStyle(color: Colors.white), // Texto digitado branco
+                      decoration: _buildInputDecoration(
+                        'Título',
+                        Icons.title_rounded,
                       ),
                     ),
-
-                    // <-- FIM DA ADIÇÃO -->
-                    const SizedBox(height: 10),
+                    _spacing,
+                    TextField(
+                      controller: _nomeRuaController,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: _buildInputDecoration(
+                        'Nome da Rua',
+                        Icons.signpost_outlined,
+                      ),
+                    ),
+                    _spacing,
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -104,7 +154,11 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
                           flex: 2,
                           child: TextField(
                             controller: _cepController,
-                            decoration: const InputDecoration(labelText: 'CEP'),
+                            style: const TextStyle(color: Colors.white),
+                            decoration: _buildInputDecoration(
+                              'CEP',
+                              Icons.pin_drop_outlined,
+                            ),
                             keyboardType: TextInputType.number,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
@@ -117,21 +171,29 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
                           flex: 1,
                           child: TextField(
                             controller: _numeroController,
-                            decoration: const InputDecoration(labelText: 'Nº'),
+                            style: const TextStyle(color: Colors.white),
+                            decoration: _buildInputDecoration(
+                              'Nº',
+                              Icons.numbers_rounded,
+                            ),
                             keyboardType: TextInputType.number,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    _spacing,
                     TextField(
                       controller: _noteController,
-                      decoration: const InputDecoration(labelText: 'Nota'),
+                      style: const TextStyle(color: Colors.white),
+                      decoration: _buildInputDecoration(
+                        'Nota',
+                        Icons.note_alt_outlined,
+                      ),
                       maxLines: 3,
                     ),
-                    const SizedBox(height: 20),
+                    _spacing,
                     ImageInput(_selectImage),
-                    const SizedBox(height: 20),
+                    _spacing,
                     LocationInput(_selectLocation),
                   ],
                 ),
@@ -139,38 +201,25 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
             ),
           ),
 
-          // Ajuste: Trocado para ElevatedButton para ter fundo sólido
-          ElevatedButton.icon(
-            icon: const Icon(Icons.add),
-            label: const Text('Adicionar'),
-            style: ElevatedButton.styleFrom(
-              // Ajuste: Cor de fundo (sintaxe corrigida)
-              backgroundColor: Colors.deepPurpleAccent,
-              // Adicionado para contraste
-              foregroundColor: Colors.white,
-              // Ajuste: Botão quadrado
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(0),
+          // --- Botão Adicionar (Estrutura Corrigida) ---
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.add),
+              label: const Text('Adicionar'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _buttonColor, // Cor rosa do botão
+                foregroundColor: Colors.black, // Cor do texto (preto)
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0), // Botão quadrado
+                ),
+                minimumSize: const Size(double.infinity, 50), // Largura total
               ),
-              // Ajuste: Largura total e altura fixa
-              minimumSize: const Size(double.infinity, 50),
-              // minimumSize: const Size(5, 20),
+              onPressed: _submitForm,
             ),
-            onPressed: _submitForm,
+            
           ),
-
-          // ElevatedButton.icon(
-          //   icon: const Icon(Icons.add),
-          //   label: const Text('Adicionar'),
-          //   style: ElevatedButton.styleFrom(
-          //     foregroundColor: Colors.black,
-          //     // backgroundColor: Theme.of(context).colorScheme.secondary,
-          //     elevation: 0,
-          //     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          //   ),
-          //   onPressed: _submitForm,
-          // ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 10),
         ],
       ),
     );
