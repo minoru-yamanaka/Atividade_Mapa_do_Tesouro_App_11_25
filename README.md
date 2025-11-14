@@ -1,6 +1,14 @@
 # 🌿 RedeVerde - Foto Lugares
 
-`RedeVerde` (anteriormente Foto-Lugares) é um aplicativo de prova de conceito em Flutter focado em cultivo colaborativo. Ele permite que usuários (jardineiros) descubram, salvem e compartilhem seus locais favoritos de jardinagem, hortas comunitárias e achados botânicos.
+🌿 Bem-vindo ao RedeVerde! 🌿
+
+Aqui, cada foto e cada lugar mapeado ajuda a espalhar o trabalho incrível da nossa comunidade verde!
+A proposta do app é simples (e poderosa): permitir que você compartilhe e divulgue os pontos de cultivo, hortas, projetos e descobertas da RedeVerde, fortalecendo essa grande rede de jardineiros apaixonados pela natureza.
+
+Descubra novos espaços, registre seus achados 🌱✨ e mostre ao mundo onde o verde acontece!
+Junte-se à comunidade, inspire outras pessoas e ajude a fazer o cultivo colaborativo crescer ainda mais.
+
+Vamos florescer juntos? 💚
 
 ## 📸 Telas do Aplicativo
 
