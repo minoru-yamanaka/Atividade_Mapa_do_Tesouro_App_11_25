@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Lugares',
         theme: ThemeData(
-          primarySwatch: Colors.indigo,
+          primarySwatch: Colors.blue,
           hintColor: Colors.amber,
           visualDensity: VisualDensity.adaptivePlatformDensity, //Deixa a aplicação responsiva. 
         ),

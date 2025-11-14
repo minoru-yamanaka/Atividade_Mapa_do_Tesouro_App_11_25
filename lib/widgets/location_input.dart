@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
-import 'package:foto/models/place.dart'; // Precisamos disso para o PlaceLocation
+import 'package:foto/models/place.dart';
 
 class LocationInput extends StatefulWidget {
   final Function(PlaceLocation) onSelectLocation;
@@ -12,12 +12,13 @@ class LocationInput extends StatefulWidget {
 }
 
 class _LocationInputState extends State<LocationInput> {
-  String? _previewImageUrl;
+  bool _hasLocation = false;
   bool _isLoading = false;
 
   Future<void> _getCurrentUserLocation() async {
     setState(() {
       _isLoading = true;
+      _hasLocation = false;
     });
 
     try {
@@ -30,6 +31,7 @@ class _LocationInputState extends State<LocationInput> {
       if (!serviceEnabled) {
         serviceEnabled = await location.requestService();
         if (!serviceEnabled) {
+          setState(() => _isLoading = false);
           return;
         }
       }
@@ -38,30 +40,29 @@ class _LocationInputState extends State<LocationInput> {
       if (permissionGranted == PermissionStatus.denied) {
         permissionGranted = await location.requestPermission();
         if (permissionGranted != PermissionStatus.granted) {
+          setState(() => _isLoading = false);
           return;
         }
       }
 
       locationData = await location.getLocation();
 
-      if (locationData.latitude == null || locationData.longitude == null)
+      if (locationData.latitude == null || locationData.longitude == null) {
+        setState(() => _isLoading = false);
         return;
+      }
 
       final selectedLocation = PlaceLocation(
         latitude: locationData.latitude!,
         longitude: locationData.longitude!,
       );
 
-      // Simplesmente mostra o Lat/Lng.
-      // Você poderia usar uma API como Google Static Maps aqui para mostrar uma imagem.
       setState(() {
-        _previewImageUrl =
-            'Lat: ${locationData.latitude}, Lng: ${locationData.longitude}';
+        _hasLocation = true;
       });
 
       widget.onSelectLocation(selectedLocation);
     } catch (e) {
-      // Tratar erro
       print("Erro ao pegar localização: $e");
     } finally {
       setState(() {
@@ -70,30 +71,85 @@ class _LocationInputState extends State<LocationInput> {
     }
   }
 
+  Widget _buildStatusContent(ThemeData theme) {
+    if (_isLoading) {
+      return const SizedBox(
+        height: 24,
+        width: 24,
+        child: CircularProgressIndicator(strokeWidth: 2),
+      );
+    }
+
+    if (_hasLocation) {
+      return const Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.check_circle_outline, color: Colors.green, size: 20),
+          SizedBox(width: 8),
+          Text(
+            'Localização capturada!',
+            style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+          ),
+        ],
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.location_off_outlined,
+          color: theme.colorScheme.onSurface.withOpacity(0.6),
+          size: 20,
+        ),
+        const SizedBox(width: 8),
+        Text(
+          'Informar Localização!',
+          style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       children: [
+        // Container de Status com borda quadrada
         Container(
-          height: 170,
+          height: 50,
           width: double.infinity,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            border: Border.all(width: 1, color: Colors.grey),
+            // Ajuste: Borda quadrada
+            borderRadius: BorderRadius.circular(0),
+            border: Border.all(
+              width: 1,
+              color: theme.colorScheme.outline.withOpacity(0.7),
+            ),
           ),
-          child: _isLoading
-              ? const CircularProgressIndicator()
-              : _previewImageUrl == null
-              ? const Text(
-                  'Localização não informada!',
-                  textAlign: TextAlign.center,
-                )
-              : Text(_previewImageUrl!),
+          child: _buildStatusContent(theme),
         ),
         const SizedBox(height: 10),
+
+        // Ajuste: Trocado para ElevatedButton para ter fundo sólido
         ElevatedButton.icon(
-          icon: const Icon(Icons.location_on),
-          label: const Text('Localização Atual'),
+          icon: const Icon(Icons.location_on_outlined),
+          label: const Text('Buscar Localização Atual'),
+          style: ElevatedButton.styleFrom(
+            // Ajuste: Cor de fundo (sintaxe corrigida)
+            backgroundColor: Colors.deepPurpleAccent,
+            // Adicionado para contraste
+            foregroundColor: Colors.white,
+            // Ajuste: Botão quadrado
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+            ),
+            // Ajuste: Largura total e altura fixa
+            minimumSize: const Size(double.infinity, 50),
+          ),
           onPressed: _getCurrentUserLocation,
         ),
       ],

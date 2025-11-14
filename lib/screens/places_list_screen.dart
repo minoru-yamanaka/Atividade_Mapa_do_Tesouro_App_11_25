@@ -8,7 +8,7 @@ class PlacesListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mapas dos Tesouros'),
+        title: const Text('Meus Lugares'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -24,21 +24,34 @@ class PlacesListScreen extends StatelessWidget {
             ? ch!
             : ListView.builder(
                 itemCount: greatePlaces.itemsCount,
-                itemBuilder: (context, i) => ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: FileImage(
-                      greatePlaces.itemByIndex(i).image,
+                itemBuilder: (context, i) {
+                  final place = greatePlaces.itemByIndex(i);
+
+                  // <-- LÓGICA ATUALIZADA -->
+                  final note = place.note ?? 'Sem nota';
+                  final rua = place.location?.nomeRua ?? 'Rua não informada';
+                  final numero = place.location?.numero ?? 'S/N';
+                  final cep = place.location?.cep ?? '';
+
+                  // Formata a linha do endereço
+                  String endereco = '$rua, $numero';
+                  if (cep.isNotEmpty) {
+                    endereco += ' - CEP $cep';
+                  }
+
+                  final subtitleText = '$note\n$endereco';
+                  // <-- FIM DA ATUALIZAÇÃO -->
+
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: FileImage(place.image),
                     ),
-                  ),
-                  title: Text(greatePlaces.itemByIndex(i).title),
-                  // <-- ATUALIZADO (Mostra a nota ou um texto padrão)
-                  subtitle: Text(
-                    greatePlaces.itemByIndex(i).note ?? 'Sem notas',
-                  ),
-                  onTap: () {
-                    // Aqui você pode navegar para uma tela de detalhes
-                  },
-                ),
+                    title: Text(place.title),
+                    subtitle: Text(subtitleText),
+                    isThreeLine: true,
+                    onTap: () {},
+                  );
+                },
               ),
       ),
     );
